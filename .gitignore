@@ -1,0 +1,7 @@
+build/
+devel/
+logs/
+*.sw?
+.vscode/
+.idea/
+.DS_Store

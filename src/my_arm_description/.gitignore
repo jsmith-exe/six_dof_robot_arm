@@ -1,0 +1,10 @@
+# Catkin
+build/
+devel/
+logs/
+
+# Editors
+*.swp
+*.swo
+.vscode/
+.idea/
