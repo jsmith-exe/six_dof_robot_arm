@@ -1,180 +1,124 @@
 <?xml version="1.0"?>
-<robot name="six_dof_arm">
-  <!-- ======================== -->
-  <!-- Base link  (rotates yaw) -->
-  <!-- ======================== -->
+<!-- Converted to xacro so you can tweak dimensions & reuse blocks quickly -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="six_dof_arm">
+
+  <!-- ============= Global tunable parameters ============= -->
+  <xacro:property name="base_height" value="0.05"/>
+  <xacro:property name="base_radius" value="0.05"/>
+
+  <xacro:property name="l1_len"  value="0.30"/>
+  <xacro:property name="l2_len"  value="0.30"/>
+  <xacro:property name="l3_len"  value="0.30"/>
+  <xacro:property name="l4_len"  value="0.20"/>
+  <xacro:property name="l5_len"  value="0.10"/>
+  <xacro:property name="tool_len" value="0.10"/>
+
+  <xacro:property name="big_rad"   value="0.03"/>
+  <xacro:property name="small_rad" value="0.02"/>
+
+  <!-- A tiny helper macro to build simple cylinder links -->
+  <xacro:macro name="cyl_link" params="name len rad">
+    <link name="${name}">
+      <visual>
+        <origin xyz="0 0 ${len/2}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="${len}" radius="${rad}"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${len/2}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="${len}" radius="${rad}"/>
+        </geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+  <!-- ================= Base link ================= -->
   <link name="base_link">
-    <inertial>
-      <mass value="1"/>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <inertia ixx="0.01" iyy="0.01" izz="0.01" ixy="0" ixz="0" iyz="0"/>
-    </inertial>
     <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <cylinder length="0.05" radius="0.05"/>
+        <cylinder length="${base_height}" radius="${base_radius}"/>
       </geometry>
     </visual>
     <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <cylinder length="0.05" radius="0.05"/>
+        <cylinder length="${base_height}" radius="${base_radius}"/>
       </geometry>
     </collision>
   </link>
 
-  <!-- ==================================== -->
-  <!-- Joint 1 (Base yaw)  &  Link 1 (upper arm) -->
-  <!-- ==================================== -->
+  <!-- ============ Kinematic chain ============ -->
+  <!-- Joint1 + Link1 -->
   <joint name="joint_1" type="revolute">
     <parent link="base_link"/>
-    <child link="link_1"/>
-    <origin xyz="0 0 0.05" rpy="0 0 0"/>
-    <axis xyz="0 0 1"/>
-    <limit effort="10" velocity="1.57" lower="-3.1416" upper="3.1416"/>
+    <child  link="link_1"/>
+    <origin xyz="0 0 ${base_height}" rpy="0 0 0"/>
+    <axis   xyz="0 0 1"/>
+    <limit lower="-3.14" upper="3.14" effort="10" velocity="1.5"/>
   </joint>
+  <xacro:cyl_link name="link_1" len="${l1_len}" rad="${big_rad}"/>
 
-  <link name="link_1">
-    <visual>
-      <origin xyz="0 0 0.15" rpy="0 0 0"/>
-      <geometry>
-        <cylinder length="0.30" radius="0.03"/>
-      </geometry>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0.15" rpy="0 0 0"/>
-      <geometry>
-        <cylinder length="0.30" radius="0.03"/>
-      </geometry>
-    </collision>
-  </link>
-
-  <!-- ========================= -->
-  <!-- Joint 2 (Shoulder pitch) -->
-  <!-- ========================= -->
+  <!-- Joint2 + Link2 -->
   <joint name="joint_2" type="revolute">
     <parent link="link_1"/>
-    <child link="link_2"/>
-    <origin xyz="0 0 0.30" rpy="0 0 0"/>
-    <axis xyz="0 1 0"/>
-    <limit effort="10" velocity="1.57" lower="-1.5708" upper="1.5708"/>
+    <child  link="link_2"/>
+    <origin xyz="0 0 ${l1_len}" rpy="0 0 0"/>
+    <axis   xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="10" velocity="1.5"/>
   </joint>
+  <xacro:cyl_link name="link_2" len="${l2_len}" rad="${big_rad}"/>
 
-  <link name="link_2">
-    <visual>
-      <origin xyz="0 0 0.15" rpy="0 0 0"/>
-      <geometry>
-        <cylinder length="0.30" radius="0.03"/>
-      </geometry>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0.15" rpy="0 0 0"/>
-      <geometry>
-        <cylinder length="0.30" radius="0.03"/>
-      </geometry>
-    </collision>
-  </link>
-
-  <!-- ======================== -->
-  <!-- Joint 3 (Elbow pitch)  -->
-  <!-- ======================== -->
+  <!-- Joint3 + Link3 -->
   <joint name="joint_3" type="revolute">
     <parent link="link_2"/>
-    <child link="link_3"/>
-    <origin xyz="0 0 0.30" rpy="0 0 0"/>
-    <axis xyz="0 1 0"/>
-    <limit effort="8" velocity="1.57" lower="-1.5708" upper="1.5708"/>
+    <child  link="link_3"/>
+    <origin xyz="0 0 ${l2_len}" rpy="0 0 0"/>
+    <axis   xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="8" velocity="1.5"/>
   </joint>
+  <xacro:cyl_link name="link_3" len="${l3_len}" rad="${big_rad}"/>
 
-  <link name="link_3">
-    <visual>
-      <origin xyz="0 0 0.15" rpy="0 0 0"/>
-      <geometry>
-        <cylinder length="0.30" radius="0.025"/>
-      </geometry>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0.15" rpy="0 0 0"/>
-      <geometry>
-        <cylinder length="0.30" radius="0.025"/>
-      </geometry>
-    </collision>
-  </link>
-
-  <!-- ====================== -->
-  <!-- Joint 4 (Wrist pitch) -->
-  <!-- ====================== -->
+  <!-- Joint4 + Link4 -->
   <joint name="joint_4" type="revolute">
     <parent link="link_3"/>
-    <child link="link_4"/>
-    <origin xyz="0 0 0.30" rpy="0 0 0"/>
-    <axis xyz="1 0 0"/>
-    <limit effort="5" velocity="2.09" lower="-1.5708" upper="1.5708"/>
+    <child  link="link_4"/>
+    <origin xyz="0 0 ${l3_len}" rpy="0 0 0"/>
+    <axis   xyz="1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="5" velocity="2.0"/>
   </joint>
+  <xacro:cyl_link name="link_4" len="${l4_len}" rad="${small_rad}"/>
 
-  <link name="link_4">
-    <visual>
-      <origin xyz="0 0 0.10" rpy="0 0 0"/>
-      <geometry>
-        <cylinder length="0.20" radius="0.02"/>
-      </geometry>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0.10" rpy="0 0 0"/>
-      <geometry>
-        <cylinder length="0.20" radius="0.02"/>
-      </geometry>
-    </collision>
-  </link>
-
-  <!-- ==================== -->
-  <!-- Joint 5 (Wrist yaw) -->
-  <!-- ==================== -->
+  <!-- Joint5 + Link5 -->
   <joint name="joint_5" type="revolute">
     <parent link="link_4"/>
-    <child link="link_5"/>
-    <origin xyz="0 0 0.20" rpy="0 0 0"/>
-    <axis xyz="0 1 0"/>
-    <limit effort="4" velocity="2.09" lower="-1.5708" upper="1.5708"/>
+    <child  link="link_5"/>
+    <origin xyz="0 0 ${l4_len}" rpy="0 0 0"/>
+    <axis   xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="4" velocity="2.0"/>
   </joint>
+  <xacro:cyl_link name="link_5" len="${l5_len}" rad="${small_rad}"/>
 
-  <link name="link_5">
-    <visual>
-      <origin xyz="0 0 0.05" rpy="0 0 0"/>
-      <geometry>
-        <cylinder length="0.10" radius="0.02"/>
-      </geometry>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0.05" rpy="0 0 0"/>
-      <geometry>
-        <cylinder length="0.10" radius="0.02"/>
-      </geometry>
-    </collision>
-  </link>
-
-  <!-- ===================== -->
-  <!-- Joint 6 (Wrist roll) -->
-  <!-- ===================== -->
+  <!-- Joint6 + Tool -->
   <joint name="joint_6" type="revolute">
     <parent link="link_5"/>
-    <child link="tool0"/>
-    <origin xyz="0 0 0.10" rpy="0 0 0"/>
-    <axis xyz="0 0 1"/>
-    <limit effort="2" velocity="2.09" lower="-3.1416" upper="3.1416"/>
+    <child  link="tool0"/>
+    <origin xyz="0 0 ${l5_len}" rpy="0 0 0"/>
+    <axis   xyz="0 0 1"/>
+    <limit lower="-3.14" upper="3.14" effort="2" velocity="2.0"/>
   </joint>
 
   <link name="tool0">
     <visual>
-      <origin xyz="0 0 0.05" rpy="0 0 0"/>
+      <origin xyz="0 0 ${tool_len/2}" rpy="0 0 0"/>
       <geometry>
-        <box size="0.05 0.05 0.10"/>
+        <box size="0.05 0.05 ${tool_len}"/>
       </geometry>
     </visual>
     <collision>
-      <origin xyz="0 0 0.05" rpy="0 0 0"/>
+      <origin xyz="0 0 ${tool_len/2}" rpy="0 0 0"/>
       <geometry>
-        <box size="0.05 0.05 0.10"/>
+        <box size="0.05 0.05 ${tool_len}"/>
       </geometry>
     </collision>
   </link>
