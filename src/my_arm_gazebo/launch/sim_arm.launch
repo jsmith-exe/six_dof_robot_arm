@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Load empty Gazebo world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch"/>
+
+  <!-- Load robot description from XACRO -->
+  <param name="robot_description"
+         command="$(find xacro)/xacro '$(find my_arm_description)/urdf/six_dof_arm.xacro'"/>
+
+  <!-- Spawn the robot model in Gazebo -->
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_arm"
+        args="-urdf -param robot_description -model six_dof_arm"/>
+
+  <!-- Publish TF for the robot links -->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="rsp"/>
+
+  <!-- Load PID gains into gazebo_ros_control namespace -->
+  <rosparam ns="gazebo_ros_control"
+            command="load"
+            file="$(find my_arm_gazebo)/config/gazebo_control.yaml"/>
+
+  <!-- Launch controllers (joint_state and trajectory) -->
+  <include file="$(find my_arm_gazebo)/launch/controllers.launch"/>
+</launch>

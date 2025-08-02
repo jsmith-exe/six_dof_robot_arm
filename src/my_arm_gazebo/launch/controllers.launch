@@ -1,0 +1,10 @@
+<launch>
+  <!-- Load controllers at runtime -->
+  <rosparam file="$(find my_arm_gazebo)/config/controllers.yaml" command="load"/>
+
+  <node pkg="controller_manager"
+        type="spawner"
+        name="spawn_controllers"
+        args="arm_controller joint_state_controller"
+        respawn="false" />
+</launch>

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>my_arm_gazebo</name>
+  <version>0.0.1</version>
+  <description>Gazebo integration for my 6-DOF arm</description>
+  <maintainer email="you@yourdomain.com">Your Name</maintainer>
+  <license>MIT</license>
+
+  <!-- buildtool and runtime dependencies -->
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>gazebo_ros</depend>
+  <depend>controller_manager</depend>
+  <depend>joint_state_controller</depend>
+  <depend>position_controllers</depend>
+  <depend>transmission_interface</depend>
+
+  <export>
+    <!-- this lets roslaunch find your launch files -->
+    <launchfile/>
+  </export>
+</package>
